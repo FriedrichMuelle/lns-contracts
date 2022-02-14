@@ -42,7 +42,7 @@ module.exports = {
       tags: ["test", "legacy", "use_root"],
     },
     localhost: {
-      url: "http://127.0.0.1:9545",
+      url: "http://127.0.0.1:8545",
       saveDeployments: false,
       tags: ["test", "legacy", "use_root"],
     },
@@ -57,9 +57,27 @@ module.exports = {
       tags: ["legacy", "use_root"],
       chainId: 1,
       accounts: real_accounts,
-    }
+    },
+    smartbch: {
+      url: "https://smartbch.fountainhead.cash/mainnet",
+      accounts: real_accounts,
+      chainId: 10000,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 1046739556,
+    },
+    "smartbch-amber": {
+      url: "http://moeing.tech:8545",
+      accounts: real_accounts,
+      chainId: 10001,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasPrice: 1046739556,
+    },
   },
   mocha: {
+    timeout: 600000
   },
   abiExporter: {
     path: './build/contracts',
