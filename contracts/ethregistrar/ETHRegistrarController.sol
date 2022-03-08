@@ -149,8 +149,8 @@ contract ETHRegistrarController is Ownable {
         maxCommitmentAge = _maxCommitmentAge;
     }
 
-    function withdraw() public onlyOwner {
-        payable(msg.sender).transfer(address(this).balance);        
+    function withdraw() public {
+        payable(owner()).transfer(address(this).balance);
     }
 
     function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
