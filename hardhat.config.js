@@ -22,13 +22,14 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 
+require("./tasks");
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-real_accounts = undefined;
-if(process.env.DEPLOYER_KEY && process.env.OWNER_KEY) {
-  real_accounts = [process.env.DEPLOYER_KEY, process.env.OWNER_KEY];
-}
+real_accounts = [
+  process.env.DEPLOYER_KEY, process.env.OWNER_KEY, process.env.USER_KEY
+]
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -105,6 +106,9 @@ module.exports = {
     owner: {
       default: 1,
     },
+    user: {
+      default: 2,
+    }
   },
 };
 

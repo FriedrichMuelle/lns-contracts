@@ -1,13 +1,15 @@
 {
-  "name": "@ensdomains/ens-contracts",
+  "name": "@bchdomains/lns-contracts",
   "version": "0.0.8",
-  "description": "ENS contracts",
+  "description": "LNS contracts",
   "scripts": {
     "test": "npx hardhat test",
     "lint": "npx hardhat check",
     "build": "npx hardhat compile",
     "prepublishOnly": "yarn build",
-    "pub": "yarn publish --access public"
+    "pub": "yarn publish --access public",
+    "deploy:smartbch-amber": "npx hardhat --network smartbch-amber deploy --deploy-scripts deploy/smartbch",
+    "deploy:smartbch": "npx hardhat --network smartbch deploy --deploy-scripts deploy/smartbch"
   },
   "files": [
     "build/contracts/*json",
@@ -53,12 +55,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ensdomains/ens-contracts.git"
+    "url": "git+https://github.com/bchdomains/lns-contracts.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ensdomains/ens-contracts/issues"
+    "url": "https://github.com/bchdomains/lns-contracts/issues"
   },
-  "homepage": "https://github.com/ensdomains/ens-contracts#readme"
+  "homepage": "https://github.com/bchdomains/lns-contracts#readme"
 }

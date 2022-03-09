@@ -6,7 +6,8 @@ import "./ETHRegistrarController.sol";
 import "../resolvers/Resolver.sol";
 
 contract BulkRenewal {
-    bytes32 constant private ETH_NAMEHASH = 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    // bytes32 constant private ETH_NAMEHASH = 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    bytes32 public immutable TLD_NAMEHASH;
     bytes4 constant private REGISTRAR_CONTROLLER_ID = 0x018fac06;
     bytes4 constant private INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
     bytes4 constant public BULK_RENEWAL_ID = bytes4(
@@ -16,13 +17,14 @@ contract BulkRenewal {
 
     ENS public ens;
 
-    constructor(ENS _ens) public {
+    constructor(ENS _ens, bytes32 _tldNameHash) public {
         ens = _ens;
+        TLD_NAMEHASH = _tldNameHash;
     }
 
     function getController() internal view returns(ETHRegistrarController) {
-        Resolver r = Resolver(ens.resolver(ETH_NAMEHASH));
-        return ETHRegistrarController(r.interfaceImplementer(ETH_NAMEHASH, REGISTRAR_CONTROLLER_ID));
+        Resolver r = Resolver(ens.resolver(TLD_NAMEHASH));
+        return ETHRegistrarController(r.interfaceImplementer(TLD_NAMEHASH, REGISTRAR_CONTROLLER_ID));
     }
 
     function rentPrice(string[] calldata names, uint duration) external view returns(uint total) {

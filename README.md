@@ -166,3 +166,19 @@ yarn test
 ```
 yarn pub
 ```
+
+### How to register a name from CLI
+
+There is a command line interface to register a single or a list of LNS names.
+
+Be sure to copy `.env.org` to `.env` and set the `USER_KEY` to a private key with some BCH available.
+
+For `register` task `address` is an optional parameter allowing to set the SmartBCH address of newly registered name.
+
+Otherwise, all registered names can get their SmartBCH address set in the [app](https://app.bch.domains).
+
+```
+yarn
+npx hardhat --network smartbch-amber register --name test1 --address 0xabcdef....
+npx hardhat --network smartbch-amber register:list --names test4,test5,test6
+```
