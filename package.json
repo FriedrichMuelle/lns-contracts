@@ -15,7 +15,7 @@
     "build/contracts/*json",
     "contracts/**/*.sol",
     "artifacts/contracts/**/*.json",
-    "deployments/mainnet/*.json"
+    "deployments/smartbch/*.json"
   ],
   "main": "index.js",
   "devDependencies": {
