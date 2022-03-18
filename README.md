@@ -1,8 +1,8 @@
-# ENS
+# LNS
 
-[![Build Status](https://travis-ci.org/ensdomains/ens-contracts.svg?branch=master)](https://travis-ci.org/ensdomains/ens-contracts)
+[![Build Status](https://travis-ci.org/bchdomains/lns-contracts.svg?branch=master)](https://travis-ci.org/bchdomains/lns-contracts)
 
-For documentation of the ENS system, see [docs.ens.domains](https://docs.ens.domains/).
+For documentation of the LNS system, see [docs.bch.domains](https://docs.bch.domains/).
 
 ## npm package
 
@@ -32,47 +32,47 @@ import {
 
 ```
 // Registry
-import '@ensdomains/ens-contracts/contracts/registry/ENS.sol';
-import '@ensdomains/ens-contracts/contracts/registry/ENSRegistry.sol';
-import '@ensdomains/ens-contracts/contracts/registry/ENSRegistryWithFallback.sol';
-import '@ensdomains/ens-contracts/contracts/registry/ReverseRegistrar.sol';
-import '@ensdomains/ens-contracts/contracts/registry/TestRegistrar.sol';
+import '@bchdomains/lns-contracts/contracts/registry/ENS.sol';
+import '@bchdomains/lns-contracts/contracts/registry/ENSRegistry.sol';
+import '@bchdomains/lns-contracts/contracts/registry/ENSRegistryWithFallback.sol';
+import '@bchdomains/lns-contracts/contracts/registry/ReverseRegistrar.sol';
+import '@bchdomains/lns-contracts/contracts/registry/TestRegistrar.sol';
 // EthRegistrar
-import '@ensdomains/ens-contracts/contracts/ethregistrar/BaseRegistrar.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/BaseRegistrarImplementation.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/BulkRenewal.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/BaseRegistrar.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/ETHRegistrarController.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/LinearPremiumPriceOracle.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/PriceOracle.sol';
-import '@ensdomains/ens-contracts/contracts/ethregistrar/StablePriceOracle.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/BaseRegistrar.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/BaseRegistrarImplementation.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/BulkRenewal.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/BaseRegistrar.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/ETHRegistrarController.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/LinearPremiumPriceOracle.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/PriceOracle.sol';
+import '@bchdomains/lns-contracts/contracts/ethregistrar/StablePriceOracle.sol';
 // Resolvers
-import '@ensdomains/ens-contracts/contracts/resolvers/PublicResolver.sol';
-import '@ensdomains/ens-contracts/contracts/resolvers/Resolver.sol';
+import '@bchdomains/lns-contracts/contracts/resolvers/PublicResolver.sol';
+import '@bchdomains/lns-contracts/contracts/resolvers/Resolver.sol';
 ```
 
 ##  Accessing to binary file.
 
-If your environment does not have compiler, you can access to the raw hardhat artifacts files at `node_modules/@ensdomains/ens-contracts/artifacts/contracts/${modName}/${contractName}.sol/${contractName}.json`
+If your environment does not have compiler, you can access to the raw hardhat artifacts files at `node_modules/@bchdomains/lns-contracts/artifacts/contracts/${modName}/${contractName}.sol/${contractName}.json`
 
 
 ## Contracts
 
 ## Registry
 
-The ENS registry is the core contract that lies at the heart of ENS resolution. All ENS lookups start by querying the registry. The registry maintains a list of domains, recording the owner, resolver, and TTL for each, and allows the owner of a domain to make changes to that data. It also includes some generic registrars.
+The LNS registry is the core contract that lies at the heart of LNS resolution. All LNS lookups start by querying the registry. The registry maintains a list of domains, recording the owner, resolver, and TTL for each, and allows the owner of a domain to make changes to that data. It also includes some generic registrars.
 
 ### ENS.sol
 
-Interface of the ENS Registry.
+Interface of the LNS Registry.
 
 ### ENSRegistry
 
-Implementation of the ENS Registry, the central contract used to look up resolvers and owners for domains.
+Implementation of the LNS Registry, the central contract used to look up resolvers and owners for domains.
 
 ### ENSRegistryWithFallback
 
-The new impelmentation of the ENS Registry after [the 2020 ENS Registry Migration](https://docs.ens.domains/ens-migration-february-2020/technical-description#new-ens-deployment).
+The new impelmentation of the LNS Registry after [the 2020 ENS Registry Migration](https://docs.ens.domains/ens-migration-february-2020/technical-description#new-ens-deployment).
 
 ### FIFSRegistrar
 
@@ -85,23 +85,23 @@ Implementation of the reverse registrar responsible for managing reverse resolut
 
 ### TestRegistrar
 
-Implementation of the `.test` registrar facilitates easy testing of ENS on the Ethereum test networks. Currently deployed on Ropsten network, it provides functionality to instantly claim a domain for test purposes, which expires 28 days after it was claimed.
+Implementation of the `.test` registrar facilitates easy testing of LNS on the Ethereum test networks. Currently deployed on Ropsten network, it provides functionality to instantly claim a domain for test purposes, which expires 28 days after it was claimed.
 
 
 ## EthRegistrar
 
-Implements an [ENS](https://ens.domains/) registrar intended for the .eth TLD.
+Implements an [LNS](https://bch.domains/) registrar intended for the .bch TLD.
 
 These contracts were audited by ConsenSys dilligence; the audit report is available [here](https://github.com/ConsenSys/ens-audit-report-2019-02).
 
 ### BaseRegistrar
 
-BaseRegistrar is the contract that owns the TLD in the ENS registry. This contract implements a minimal set of functionality:
+BaseRegistrar is the contract that owns the TLD in the LNS registry. This contract implements a minimal set of functionality:
 
  - The owner of the registrar may add and remove controllers.
  - Controllers may register new domains and extend the expiry of (renew) existing domains. They can not change the ownership or reduce the expiration time of existing domains.
  - Name owners may transfer ownership to another address.
- - Name owners may reclaim ownership in the ENS registry if they have lost it.
+ - Name owners may reclaim ownership in the LNS registry if they have lost it.
  - Owners of names in the interim registrar may transfer them to the new registrar, during the 1 year transition period. When they do so, their deposit is returned to them in its entirety.
 
 This separation of concerns provides name owners strong guarantees over continued ownership of their existing names, while still permitting innovation and change in the way names are registered and renewed via the controller mechanism.
@@ -132,7 +132,7 @@ StablePriceOracle is a price oracle implementation that allows the contract owne
 
 ## Resolvers
 
-Resolver implements a general-purpose ENS resolver that is suitable for most standard ENS use-cases. The public resolver permits updates to ENS records by the owner of the corresponding name.
+Resolver implements a general-purpose LNS resolver that is suitable for most standard LNS use-cases. The public resolver permits updates to LNS records by the owner of the corresponding name.
 
 PublicResolver includes the following profiles that implements different EIPs.
 
@@ -150,8 +150,8 @@ PublicResolver includes the following profiles that implements different EIPs.
 ### How to setup
 
 ```
-git clone https://github.com/ensdomains/ens-contracts
-cd ens-contracts
+git clone https://github.com/bchdomains/lns-contracts
+cd lns-contracts
 yarn
 ```
 
