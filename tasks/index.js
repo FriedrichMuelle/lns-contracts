@@ -73,3 +73,21 @@ task("register:list", "Registers a list of LNS names")
     await register(registry, resolver, controller.connect(signer), name, ethers.constants.AddressZero);
   }
 })
+
+task("oracle:set_prices", "Sets price oracle's prices")
+.setAction(async function ({ _ }, { ethers: { getNamedSigner } }, runSuper) {
+  const priceOracle = await ethers.getContract("BchPriceOracle");
+  const signer = await getNamedSigner("deployer");
+  const yearInSeconds = 31556951;
+  const eth = ethers.BigNumber.from("1000000000000000000");
+
+  const launchPrices = [
+    eth.mul(100).div(yearInSeconds),
+    eth.mul(10).div(yearInSeconds),
+    eth.mul(1).div(yearInSeconds),
+    eth.div(10).div(yearInSeconds),
+    eth.div(100).div(yearInSeconds)
+  ];
+  const tx = await priceOracle.connect(signer).setPrices(launchPrices);
+  console.log("Prices set, txid", tx.hash);
+})
