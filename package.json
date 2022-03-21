@@ -1,6 +1,6 @@
 {
   "name": "@bchdomains/lns-contracts",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "LNS contracts",
   "scripts": {
     "test": "npx hardhat test",
@@ -15,7 +15,8 @@
     "build/contracts/*json",
     "contracts/**/*.sol",
     "artifacts/contracts/**/*.json",
-    "deployments/smartbch/*.json"
+    "deployments/smartbch/*.json",
+    "deployments/smartbch-amber/*.json"
   ],
   "main": "index.js",
   "devDependencies": {
