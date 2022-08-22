@@ -41,6 +41,9 @@ module.exports = {
       initialDate: "2019-03-15T14:06:45.000+13:00",
       saveDeployments: false,
       tags: ["test", "legacy", "use_root"],
+      blockGasLimit: 30000000,
+      gasPrice: 50000000000,
+      gas: 30000000,
     },
     localhost: {
       url: "http://127.0.0.1:8545",
@@ -76,6 +79,23 @@ module.exports = {
       tags: ["staging"],
       gasPrice: 1046739556,
     },
+    dogechain: {
+      url: "https://dogechain.ankr.com",
+      accounts: real_accounts,
+      chainId: 2000,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 50000000000
+    },
+    "dogechain-testnet": {
+      url: "https://rpc-testnet.dogechain.dog",
+      accounts: real_accounts,
+      chainId: 568,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 50000000000,
+      tags: ["staging"],
+    }
   },
   mocha: {
     timeout: 600000

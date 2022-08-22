@@ -9,14 +9,18 @@
     "prepublishOnly": "yarn build",
     "pub": "yarn publish --access public",
     "deploy:smartbch-amber": "npx hardhat --network smartbch-amber deploy --deploy-scripts deploy/smartbch",
-    "deploy:smartbch": "npx hardhat --network smartbch deploy --deploy-scripts deploy/smartbch"
+    "deploy:smartbch": "npx hardhat --network smartbch deploy --deploy-scripts deploy/smartbch",
+    "deploy:dogechain-testnet": "npx hardhat --network dogechain-testnet deploy --deploy-scripts deploy/dogechain",
+    "deploy:dogechain": "npx hardhat --network dogechain deploy --deploy-scripts deploy/dogechain"
   },
   "files": [
     "build/contracts/*json",
     "contracts/**/*.sol",
     "artifacts/contracts/**/*.json",
     "deployments/smartbch/*.json",
-    "deployments/smartbch-amber/*.json"
+    "deployments/smartbch-amber/*.json",
+    "deployments/dogechain/*.json",
+    "deployments/dogechain-testnet/*.json"
   ],
   "main": "index.js",
   "devDependencies": {
