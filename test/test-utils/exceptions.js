@@ -17,7 +17,16 @@ async function expectFailure(call) {
     assert.fail("should fail")
 }
 
+async function expectSuccess(call) {
+    try {
+        await call;
+    } catch (error) {
+        assert.fail(`should succeed. error was: ${error.toString()}`);
+    }
+}
+
 module.exports = {
     ensureException: ensureException,
-    expectFailure: expectFailure
+    expectFailure: expectFailure,
+    expectSuccess: expectSuccess,
 }
