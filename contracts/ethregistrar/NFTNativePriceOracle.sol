@@ -1,11 +1,10 @@
 pragma solidity >=0.8.4;
 
-import "./PriceOracle.sol";
+import "./NFTPriceOracle.sol";
 import "./SafeMath.sol";
 import "./StringUtils.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 struct PriceBreakdown {
     uint256 basePrice;
@@ -20,7 +19,7 @@ struct PriceBreakdown {
 
 // NFTNativePriceOracle can be configured to provide discounts to the users holding certain NFTS.
 // Also can be configured to require the NFT to allow registrations
-contract NFTNativePriceOracle is Ownable, PriceOracle {
+contract NFTNativePriceOracle is Ownable, NFTPriceOracle {
     using SafeMath for *;
     using StringUtils for *;
 
@@ -56,10 +55,8 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
     uint public requiredNFTs;
 
     bytes4 constant public INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
-    bytes4 constant public ORACLE_ID = bytes4(keccak256("price(string,uint256,uint256)") ^
-                                              keccak256("premium(string,uint256,uint256)"));
-    bytes4 constant public NFT_ORACLE_ID = bytes4(keccak256("getDiscountedPrice(uint256)") ^
-                                                  keccak256("addEligibleCollection(address)"));
+    bytes4 constant public NFT_ORACLE_ID = bytes4(keccak256("price(string,uint256,uint256,address)") ^
+                                                  keccak256("getNamePriceBreakdown(string,uint256,uint256,address)")); // 0x852ae872
 
     constructor(uint[] memory _rentPrices, uint[] memory _discounts) {
         setPrices(_rentPrices);
@@ -94,14 +91,14 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
         revert CollectionNotEligible();
     }
 
-    function countNFTs() public view returns (uint) {
-        if (tx.origin == address(0)) {
+    function countNFTs(address target) public view returns (uint) {
+        if (target == address(0)) {
             return 0;
         }
 
         uint totalBalance = 0;
         for (uint256 i = 0; i < nftCollectionsEligibleForDiscount.length; i++) {
-            totalBalance += IERC721(nftCollectionsEligibleForDiscount[i]).balanceOf(tx.origin);
+            totalBalance += IERC721(nftCollectionsEligibleForDiscount[i]).balanceOf(target);
         }
         return totalBalance;
     }
@@ -134,15 +131,14 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
         require(len > 0);
 
         uint basePrice = rentPrices[len - 1].mul(duration);
-        basePrice = basePrice.add(_premium(name, expires, duration));
         return basePrice;
     }
 
-    function getDiscountedPrice(uint basePrice) public view returns(uint) {
-        return getDiscountedPrice(basePrice, countNFTs());
+    function getDiscountedPrice(uint basePrice, address target) public view returns(uint) {
+        return getDiscountedPrice(basePrice, countNFTs(target));
     }
 
-    function getDiscountedPrice(uint basePrice, uint nftAmount) public view returns(uint) {
+    function getDiscountedPrice(uint basePrice, uint nftAmount) private view returns(uint) {
         bool eligible = isEligibleForDiscount(nftAmount);
 
         if (nftAmount > discounts.length) {
@@ -157,8 +153,8 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
         return basePrice;
     }
 
-    function price(string calldata name, uint expires, uint duration) external view override returns(uint) {
-        uint nftAmount = countNFTs();
+    function price(string calldata name, uint expires, uint duration, address target) external view override returns(uint) {
+        uint nftAmount = countNFTs(target);
         if (!canRegister(nftAmount)) {
             revert NotEnoughRequiredNFTs();
         }
@@ -194,19 +190,12 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
         emit RentDiscountChanged(_discounts);
     }
 
-    /**
-     * @dev Returns the pricing premium in internal base units.
-     */
-    function _premium(string memory name, uint expires, uint duration) virtual internal view returns(uint) {
-        return 0;
-    }
-
-    function getNamePriceBreakdown(string calldata name, uint expires, uint duration)
+    function getNamePriceBreakdown(string calldata name, uint expires, uint duration, address target)
         public
         view
         returns (PriceBreakdown memory priceBreakdown)
     {
-        uint nftAmount = countNFTs();
+        uint nftAmount = countNFTs(target);
         priceBreakdown.basePrice = getBasePrice(name, expires, duration);
         priceBreakdown.discountedPrice = getDiscountedPrice(priceBreakdown.basePrice, nftAmount);
         priceBreakdown.nftAmount = nftAmount;
@@ -218,6 +207,6 @@ contract NFTNativePriceOracle is Ownable, PriceOracle {
     }
 
     function supportsInterface(bytes4 interfaceID) public view virtual returns (bool) {
-        return interfaceID == INTERFACE_META_ID || interfaceID == ORACLE_ID || interfaceID == NFT_ORACLE_ID;
+        return interfaceID == INTERFACE_META_ID || interfaceID == NFT_ORACLE_ID;
     }
 }

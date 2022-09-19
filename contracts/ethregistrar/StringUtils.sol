@@ -13,6 +13,10 @@ library StringUtils {
         uint bytelength = bytes(s).length;
         for(len = 0; i < bytelength; len++) {
             bytes1 b = bytes(s)[i];
+            if (bytelength > 3 && len < bytelength - 2 && b == 0xEF && bytes(s)[i+1] == 0xB8 && bytes(s)[i+2] == 0x8F) {
+                return 0;
+            }
+
             if(b < 0x80) {
                 i += 1;
             } else if (b < 0xE0) {

@@ -1,9 +1,8 @@
 const ENS = artifacts.require('./registry/ENSRegistry');
 const PublicResolver = artifacts.require('./resolvers/PublicResolver');
 const BaseRegistrar = artifacts.require('./BaseRegistrarImplementation');
-const ETHRegistrarController = artifacts.require('./ETHRegistrarController');
-const DummyOracle = artifacts.require('./DummyOracle');
-const StablePriceOracle = artifacts.require('./StablePriceOracle');
+const NFTRegistrarController = artifacts.require('./NFTRegistrarController');
+const NFTNativePriceOracle = artifacts.require('./NFTNativePriceOracle');
 const { evm, exceptions } = require("../test-utils");
 const NameWrapper = artifacts.require('DummyNameWrapper.sol');
 const namehash = require('eth-ens-namehash');
@@ -13,7 +12,7 @@ const toBN = require('web3-utils').toBN;
 const DAYS = 24 * 60 * 60;
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-contract('ETHRegistrarController', function (accounts) {
+contract('NFTRegistrarController', function (accounts) {
     let ens;
     let resolver;
     let baseRegistrar;
@@ -33,9 +32,8 @@ contract('ETHRegistrarController', function (accounts) {
         baseRegistrar = await BaseRegistrar.new(ens.address, namehash.hash('eth'), {from: ownerAccount});
         await ens.setSubnodeOwner('0x0', sha3('eth'), baseRegistrar.address);
 
-        const dummyOracle = await DummyOracle.new(toBN(100000000));
-        priceOracle = await StablePriceOracle.new(dummyOracle.address, [1]);
-        controller = await ETHRegistrarController.new(
+        priceOracle = await NFTNativePriceOracle.new([1], []);
+        controller = await NFTRegistrarController.new(
             baseRegistrar.address,
             priceOracle.address,
             600,
@@ -43,6 +41,18 @@ contract('ETHRegistrarController', function (accounts) {
             {from: ownerAccount});
         await baseRegistrar.addController(controller.address, {from: ownerAccount});
         await controller.setPriceOracle(priceOracle.address, {from: ownerAccount});
+    });
+
+    it('should get and set minimum registration duration', async () => {
+        // default
+        assert.equal(await controller.getMinimumRegistrationDuration(), 365 * DAYS);
+        // override
+        await controller.setMinimumRegistrationDuration(360 * DAYS);
+        assert.equal(await controller.getMinimumRegistrationDuration(), 360 * DAYS);
+    });
+
+    it('should get the oracle address', async () => {
+        assert.equal(await controller.getPriceOracle(), priceOracle.address);
     });
 
     const checkLabels = {
@@ -91,12 +101,12 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        var tx = await controller.register("newname", registrantAccount, 28 * DAYS, secret, {value: 28 * DAYS + 1});
+        var tx = await controller.register("newname", registrantAccount, 365 * DAYS, secret, {value: 365 * DAYS + 1});
         assert.equal(tx.logs.length, 1);
         assert.equal(tx.logs[0].event, "NameRegistered");
         assert.equal(tx.logs[0].args.name, "newname");
         assert.equal(tx.logs[0].args.owner, registrantAccount);
-        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 28 * DAYS);
+        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 365 * DAYS);
     });
 
     it('should report registered names as unavailable', async () => {
@@ -110,12 +120,12 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        var tx = await controller.registerWithConfig("newconfigname", registrantAccount, 28 * DAYS, secret, resolver.address, registrantAccount, {value: 28 * DAYS + 1});
+        var tx = await controller.registerWithConfig("newconfigname", registrantAccount, 365 * DAYS, secret, resolver.address, registrantAccount, {value: 365 * DAYS + 1});
         assert.equal(tx.logs.length, 1);
         assert.equal(tx.logs[0].event, "NameRegistered");
         assert.equal(tx.logs[0].args.name, "newconfigname");
         assert.equal(tx.logs[0].args.owner, registrantAccount);
-        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 28 * DAYS);
+        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 365 * DAYS);
 
         var nodehash = namehash.hash("newconfigname.eth");
         assert.equal((await ens.resolver(nodehash)), resolver.address);
@@ -134,12 +144,12 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        var tx = await controller.registerWithConfig("newconfigname2", registrantAccount, 28 * DAYS, secret, resolver.address, NULL_ADDRESS, {value: 28 * DAYS + 1});
+        var tx = await controller.registerWithConfig("newconfigname2", registrantAccount, 365 * DAYS, secret, resolver.address, NULL_ADDRESS, {value: 365 * DAYS + 1});
         assert.equal(tx.logs.length, 1);
         assert.equal(tx.logs[0].event, "NameRegistered");
         assert.equal(tx.logs[0].args.name, "newconfigname2");
         assert.equal(tx.logs[0].args.owner, registrantAccount);
-        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 28 * DAYS);
+        assert.equal((await web3.eth.getBalance(controller.address)) - balanceBefore, 365 * DAYS);
 
         var nodehash = namehash.hash("newconfigname2.eth");
         assert.equal((await ens.resolver(nodehash)), resolver.address);
@@ -151,7 +161,7 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        await exceptions.expectFailure(controller.register("newname2", registrantAccount, 28 * DAYS, secret, {value: 28 * DAYS}));
+        await exceptions.expectFailure(controller.register("newname2", registrantAccount, 365 * DAYS, secret, {value: 365 * DAYS}));
     });
 
     it('should reject duplicate registrations', async () => {
@@ -159,7 +169,7 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        await exceptions.expectFailure(controller.register("newname", registrantAccount, 28 * DAYS, secret, {value: 28 * DAYS}));
+        await exceptions.expectFailure(controller.register("newname", registrantAccount, 365 * DAYS, secret, {value: 365 * DAYS}));
     });
 
     it('should reject for expired commitments', async () => {
@@ -167,7 +177,7 @@ contract('ETHRegistrarController', function (accounts) {
 
         await evm.advanceTime((await controller.maxCommitmentAge()).toNumber() + 1);
         var balanceBefore = await web3.eth.getBalance(controller.address);
-        await exceptions.expectFailure(controller.register("newname2", registrantAccount, 28 * DAYS, secret, {value: 28 * DAYS}));
+        await exceptions.expectFailure(controller.register("newname2", registrantAccount, 365 * DAYS, secret, {value: 365 * DAYS}));
     });
 
     it('should allow anyone to renew a name', async () => {
