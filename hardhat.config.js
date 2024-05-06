@@ -50,52 +50,52 @@ module.exports = {
       saveDeployments: false,
       tags: ["test", "legacy", "use_root"],
     },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
-      tags: ["test", "legacy", "use_root"],
-      chainId: 3,
-      accounts: real_accounts,
-    },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
-      tags: ["legacy", "use_root"],
-      chainId: 1,
-      accounts: real_accounts,
-    },
-    smartbch: {
-      url: "https://smartbch.fountainhead.cash/mainnet",
-      accounts: real_accounts,
-      chainId: 10000,
-      live: true,
-      saveDeployments: true,
-      gasPrice: 1046739556,
-    },
-    "smartbch-amber": {
-      url: "http://moeing.tech:8545",
-      accounts: real_accounts,
-      chainId: 10001,
-      live: true,
-      saveDeployments: true,
-      tags: ["staging"],
-      gasPrice: 1046739556,
-    },
-    dogechain: {
-      url: "https://dogechain.ankr.com",
-      accounts: real_accounts,
-      chainId: 2000,
-      live: true,
-      saveDeployments: true,
-      gasPrice: 50000000000
-    },
-    "dogechain-testnet": {
-      url: "https://rpc-testnet.dogechain.dog",
-      accounts: real_accounts,
-      chainId: 568,
-      live: true,
-      saveDeployments: true,
-      gasPrice: 50000000000,
-      tags: ["staging"],
-    }
+    // ropsten: {
+    //   url: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
+    //   tags: ["test", "legacy", "use_root"],
+    //   chainId: 3,
+    //   accounts: real_accounts,
+    // },
+    // mainnet: {
+    //   url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+    //   tags: ["legacy", "use_root"],
+    //   chainId: 1,
+    //   accounts: real_accounts,
+    // },
+    // smartbch: {
+    //   url: "https://smartbch.fountainhead.cash/mainnet",
+    //   accounts: real_accounts,
+    //   chainId: 10000,
+    //   live: true,
+    //   saveDeployments: true,
+    //   gasPrice: 1046739556,
+    // },
+    // "smartbch-amber": {
+    //   url: "http://moeing.tech:8545",
+    //   accounts: real_accounts,
+    //   chainId: 10001,
+    //   live: true,
+    //   saveDeployments: true,
+    //   tags: ["staging"],
+    //   gasPrice: 1046739556,
+    // },
+    // dogechain: {
+    //   url: "https://dogechain.ankr.com",
+    //   accounts: real_accounts,
+    //   chainId: 2000,
+    //   live: true,
+    //   saveDeployments: true,
+    //   gasPrice: 50000000000
+    // },
+    // "dogechain-testnet": {
+    //   url: "https://rpc-testnet.dogechain.dog",
+    //   accounts: real_accounts,
+    //   chainId: 568,
+    //   live: true,
+    //   saveDeployments: true,
+    //   gasPrice: 50000000000,
+    //   tags: ["staging"],
+    // }
   },
   mocha: {
     timeout: 600000
